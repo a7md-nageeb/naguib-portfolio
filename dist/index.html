@@ -774,7 +774,7 @@ html[data-theme="dark"] nav.t-tabs.has-scrolled{background-color:rgba(30,31,35,.
 }
 .rps:not(.is-idle).is-complete .rps-panel{position:relative;flex:1 0 auto;overflow:visible;background:none;box-shadow:none}
 .rps.is-complete .rps-panel::before{content:"";position:absolute;inset:0;border-radius:inherit;background:rgba(255,255,255,.34);box-shadow:inset 0 -8px 20px rgba(0,0,0,.06),inset 0 8px 16px rgba(255,255,255,.5),inset 0 0 0 2px rgba(255,255,255,.44);pointer-events:none}
-.rps.is-presenting-result .rps-panel::before{animation:result-panel-in 1350ms linear both}
+.rps.is-presenting-result .rps-panel::before{animation:result-panel-in 1650ms linear both}
 @keyframes result-panel-in{0%,64%{opacity:0}100%{opacity:1}}
 .rps.is-complete .rps-confetti{z-index:8}
 .rps.is-complete .rps-outcome{position:relative;z-index:7}
@@ -784,7 +784,7 @@ html[data-theme="dark"] nav.t-tabs.has-scrolled{background-color:rgba(30,31,35,.
 .rps[data-result="lose"] .rps-outcome-label{--rps-outcome-fill:#ffb49c;--rps-outcome-stroke:#703722}
 /* The shine is clipped to the letter fill, leaving the outline crisp. */
 .rps.is-presenting-result:is([data-result="win"],[data-result="lose"]) .rps-outcome-label::before{
-  animation:outcome-shadow-lift 1350ms ease-in-out both
+  animation:outcome-shadow-lift 1650ms ease-in-out both
 }
 .rps.is-presenting-result:is([data-result="win"],[data-result="lose"]) .rps-outcome-label::after{
   content:attr(data-label);
@@ -793,7 +793,7 @@ html[data-theme="dark"] nav.t-tabs.has-scrolled{background-color:rgba(30,31,35,.
   color:transparent;-webkit-text-fill-color:transparent;
   background:linear-gradient(118deg,transparent 44%,#fff9dc 44% 49%,transparent 49%) 100% 0 / 300% 100% no-repeat;
   -webkit-background-clip:text;background-clip:text;
-  animation:outcome-shine 1350ms linear both
+  animation:outcome-shine 1650ms linear both
 }
 @keyframes outcome-shadow-lift{
   0%,34%,72%,100%{filter:drop-shadow(0 3px 0 currentColor) drop-shadow(0 0 0 currentColor)}
@@ -893,4 +893,4 @@ const themeToggle=document.querySelector('.theme-toggle');function updateThemeTo
 document.querySelector('.dev-replay').addEventListener('click',()=>{const url=new URL(location.href);url.hash='';url.searchParams.set('intro','1');location.assign(url.href)});
 const introTile=document.querySelector('.intro'),introHand=introTile.querySelector('.intro-hands');introTile.addEventListener('pointerenter',event=>{if(event.pointerType!=='mouse'||document.documentElement.classList.contains('intro-pending')||matchMedia('(prefers-reduced-motion: reduce)').matches)return;introHand.classList.remove('is-greeting','is-hover-waving');void introHand.offsetWidth;introHand.classList.add('is-hover-waving')});introHand.addEventListener('animationend',event=>{if(event.animationName==='hand-hover-wave')introHand.classList.remove('is-hover-waving')});
 const skillsTile=document.querySelector('.skills');if(document.documentElement.classList.contains('intro-pending')){const introStateObserver=new MutationObserver(()=>{if(!document.documentElement.classList.contains('intro-pending')){skillsTile.classList.add('tags-in-motion');introStateObserver.disconnect()}});introStateObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']})}
-</script><script src="atmos-sky.js?v=frame-pacing"></script><script src="confetti.browser.min.js"></script><script src="rps.js?v=result-shine"></script><script type="module" src="smooth-corners.js"></script></body></html>
+</script><script src="atmos-sky.js?v=frame-pacing"></script><script src="confetti.browser.min.js"></script><script src="rps.js?v=result-shine-slow"></script><script type="module" src="smooth-corners.js"></script></body></html>

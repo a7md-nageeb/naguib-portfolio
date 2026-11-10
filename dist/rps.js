@@ -266,7 +266,7 @@ async function presentMatchResult(label,controls){
       {opacity:1,transform:lifted,offset:.55,easing:ease},
       {opacity:1,transform:center,offset:.64,easing:ease},
       {opacity:1,transform:'none'}
-    ],{duration:1350,easing:'linear'}).finished;
+    ],{duration:1650,easing:'linear'}).finished;
 
     game.classList.remove('is-presenting-result');
     await controls.animate([
