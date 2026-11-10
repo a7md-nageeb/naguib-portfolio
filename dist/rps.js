@@ -12,9 +12,20 @@ let pattern=[];
 function newPattern(){let next;do{next=Array.from({length:3},()=>choices[Math.floor(Math.random()*choices.length)])}while(next.join(',')===pattern.join(','));pattern=next}
 const buttons=[...game.querySelectorAll('[data-move]')],status=document.getElementById('rps-status'),score=document.getElementById('rps-score'),actions=game.querySelector('.rps-choices'),play=game.querySelector('.rps-reset');
 const subtitle=game.querySelector('.rps-subtitle');
-let celebrate;
-if(window.confetti)celebrate=window.confetti.create(game.querySelector('.rps-confetti'),{resize:true,useWorker:false,disableForReducedMotion:true});
-function winConfetti(){if(!celebrate)return;const defaults={origin:{y:.7},disableForReducedMotion:true};function fire(ratio,options){celebrate({...defaults,...options,particleCount:Math.floor(120*ratio)})}fire(.25,{spread:26,startVelocity:55});fire(.2,{spread:60});fire(.35,{spread:100,decay:.91,scalar:.8});fire(.1,{spread:120,startVelocity:25,decay:.92,scalar:1.2});fire(.1,{spread:120,startVelocity:45})}
+const confettiCanvas=game.querySelector('.rps-confetti');
+const celebrate=window.confetti?.create(confettiCanvas,{
+  useWorker:false,disableForReducedMotion:true
+});
+function winConfetti(){
+  if(!celebrate||reducedMotion.matches)return;
+  const {width,height}=confettiCanvas.getBoundingClientRect();
+  if(!width||!height)return;
+  confettiCanvas.width=Math.round(width);
+  confettiCanvas.height=Math.round(height);
+  const burst={particleCount:54,spread:66,startVelocity:35,ticks:140,scalar:1.05};
+  celebrate({...burst,angle:65,origin:{x:.12,y:.72}});
+  celebrate({...burst,angle:115,origin:{x:.88,y:.72}});
+}
 // Emoji Rain approach adapted from Universal-Coding-Experiments/emoji_rain.
 const emojiRain=document.createElement('div');
 emojiRain.className='rps-emoji-rain';
@@ -211,6 +222,64 @@ async function playGameSound(cue){
   }catch{}
 }
 
+function finishMatch(){
+  const outcome=you>me?'win':you<me?'lose':'draw';
+  const label=game.querySelector('.rps-outcome-label');
+  const controls=game.querySelector('.rps-controls');
+  const replay=game.querySelector('.rps-replay-group');
+  const animate=!reducedMotion.matches;
+  game.dataset.result=outcome;
+  game.classList.remove('is-activating');
+  game.classList.toggle('is-presenting-result',animate);
+  game.classList.add('is-complete');
+  label.textContent=outcome==='win'?'You Win':outcome==='lose'?'You Lose':"It's a Tie";
+  label.dataset.label=label.textContent;
+  replay.hidden=false;
+  replay.appendChild(play);
+  actions.hidden=true;
+  play.hidden=false;
+  play.textContent='Play Again';
+  status.textContent=(outcome==='win'?'You won the match!':outcome==='lose'?'I won this match.':'Match drawn.')+` Final score: ${you} — ${me}.`;
+  if(animate){
+    presentMatchResult(label,controls);
+    if(outcome==='win')requestAnimationFrame(winConfetti);
+    else if(outcome==='lose')loseConfetti();
+  }
+  else play.focus({preventScroll:true});
+}
+async function presentMatchResult(label,controls){
+  const card=game.getBoundingClientRect();
+  const heading=label.getBoundingClientRect();
+  const rise=card.top+card.height/2-heading.top-heading.height/2;
+  const scale=Math.min(1.85,(card.width-36)/Math.max(heading.width,1));
+  const center=`translateY(${rise}px) scale(${scale})`;
+  const nudge=game.dataset.result==='draw'?0:10;
+  const lifted=`translateY(${rise-nudge}px) scale(${scale})`;
+  const ease='cubic-bezier(.22,1,.36,1)';
+  controls.inert=true;
+  try{
+    await label.animate([
+      {opacity:0,transform:`translateY(${rise+18}px) scale(${scale*.76})`},
+      {opacity:1,transform:`translateY(${rise}px) scale(${scale*1.06})`,offset:.25,easing:ease},
+      {opacity:1,transform:center,offset:.36,easing:ease},
+      {opacity:1,transform:lifted,offset:.46,easing:ease},
+      {opacity:1,transform:lifted,offset:.55,easing:ease},
+      {opacity:1,transform:center,offset:.64,easing:ease},
+      {opacity:1,transform:'none'}
+    ],{duration:1350,easing:'linear'}).finished;
+
+    game.classList.remove('is-presenting-result');
+    await controls.animate([
+      {opacity:0,transform:'translateY(24px)'},
+      {opacity:1,transform:'none'}
+    ],{duration:440,easing:ease}).finished;
+  }catch{}finally{
+    game.classList.remove('is-presenting-result');
+    controls.inert=false;
+    play.focus({preventScroll:true});
+  }
+}
+
 const touchReleaseTimes=new WeakMap();
 [play,...buttons].forEach(button=>button.addEventListener('pointerup',event=>{
   if(event.pointerType==='touch')touchReleaseTimes.set(button,event.timeStamp);
@@ -271,7 +340,7 @@ timer=setTimeout(async()=>{
   game.classList.add('hands-revealed');
   const opponent=rival.image;
   timer=setTimeout(async()=>{
-const result=yours===theirs?'draw':choices[(choices.indexOf(theirs)+1)%3]===yours?'win':'lose';clearSelection();const playerHand=document.getElementById('rps-you').closest('figure'),opponentHand=document.getElementById('rps-me').closest('figure');[playerHand,opponentHand].forEach(hand=>hand.classList.remove('round-winner','round-tie'));const celebrating=result==='draw'?[playerHand,opponentHand]:[result==='win'?playerHand:opponentHand];celebrating.forEach(hand=>hand.classList.add(result==='draw'?'round-tie':'round-winner'));if(touch&&result!=='draw')playHaptic(result==='win'?[35,60,65]:[110]);if(result!=='draw')playGameSound(result==='win'?playSuccess:playDrop);await showRoundResult(result);celebrating.forEach(hand=>hand.classList.remove('round-winner','round-tie'));game.dataset.result=result;if(result==='win')you++;if(result==='lose')me++;if(result!=='draw')round++;else pattern[round]=choices[Math.floor(Math.random()*choices.length)];await tally(true);clearSelection();game.querySelector('.rps-round').textContent=`Round ${Math.min(round+1,3)} of 3`;const message=result==='draw'?'A tie. Replay this round.':result==='win'?'You win this round.':'This round is mine.';subtitle.textContent=result==='draw'?'It’s a tie!':result==='win'?'You win this round!':'I win this round!';busy=false;if(you===2||me===2||round===3){game.dataset.result=you===me?'draw':you>me?'win':'lose';subtitle.textContent=you===me?'A draw. Another match?':you>me?'You won the match!':'I won this match. Rematch?';started=false;const finalLayout=captureLayout();if(!matchMedia('(prefers-reduced-motion: reduce)').matches)actions.animate([{opacity:1,filter:'blur(0)'},{opacity:0,filter:'blur(4px)'}],{duration:180,fill:'forwards'});timer=setTimeout(()=>{game.classList.remove('is-activating');game.classList.add('is-complete');game.querySelector('.rps-outcome').textContent=you>me?'You Win':you<me?'You Lose':"It's a Tie";if(you>me)winConfetti();else if(you<me)loseConfetti();game.querySelector('.rps-replay-group').hidden=false;game.querySelector('.rps-replay-group').appendChild(play);actions.hidden=true;play.hidden=false;play.textContent='Play Again';status.textContent=(you===me?'Match drawn.':you>me?'You won the match!':'I won this match.')+` Final score: ${you} — ${me}.`;settleLayout(finalLayout);if(!matchMedia('(prefers-reduced-motion: reduce)').matches)play.animate([{opacity:0,filter:'blur(4px)',transform:'translateY(6px)'},{opacity:1,filter:'blur(0)',transform:'none'}],{duration:500,easing:'cubic-bezier(.22,1,.36,1)'});play.focus({preventScroll:true})},matchMedia('(prefers-reduced-motion: reduce)').matches?0:200)}else{game.classList.remove('hands-revealed');opponent.classList.remove('is-revealing');resetHand('rps-you','Your hand');resetHand('rps-me','My hand');delete game.dataset.result;game.querySelector('.rps-round').textContent=`Round ${round+1} of 3`;subtitle.textContent='Pick your move';status.textContent=`${message} Round ${round+1} of 3 · Pick your move.`;busy=false;buttons.forEach(b=>b.disabled=false)}},reducedMotion.matches?0:620);
+const result=yours===theirs?'draw':choices[(choices.indexOf(theirs)+1)%3]===yours?'win':'lose';clearSelection();const playerHand=document.getElementById('rps-you').closest('figure'),opponentHand=document.getElementById('rps-me').closest('figure');[playerHand,opponentHand].forEach(hand=>hand.classList.remove('round-winner','round-tie'));const celebrating=result==='draw'?[playerHand,opponentHand]:[result==='win'?playerHand:opponentHand];celebrating.forEach(hand=>hand.classList.add(result==='draw'?'round-tie':'round-winner'));if(touch&&result!=='draw')playHaptic(result==='win'?[35,60,65]:[110]);if(result!=='draw')playGameSound(result==='win'?playSuccess:playDrop);const decidingRound=result!=='draw'&&(round===2||(result==='win'?you:me)===1);if(!decidingRound)await showRoundResult(result);celebrating.forEach(hand=>hand.classList.remove('round-winner','round-tie'));game.dataset.result=result;if(result==='win')you++;if(result==='lose')me++;if(result!=='draw')round++;else pattern[round]=choices[Math.floor(Math.random()*choices.length)];await tally(true);clearSelection();game.querySelector('.rps-round').textContent=`Round ${Math.min(round+1,3)} of 3`;const message=result==='draw'?'A tie. Replay this round.':result==='win'?'You win this round.':'This round is mine.';subtitle.textContent=result==='draw'?'It’s a tie!':result==='win'?'You win this round!':'I win this round!';busy=false;if(you===2||me===2||round===3){started=false;finishMatch()}else{game.classList.remove('hands-revealed');opponent.classList.remove('is-revealing');resetHand('rps-you','Your hand');resetHand('rps-me','My hand');delete game.dataset.result;game.querySelector('.rps-round').textContent=`Round ${round+1} of 3`;subtitle.textContent='Pick your move';status.textContent=`${message} Round ${round+1} of 3 · Pick your move.`;busy=false;buttons.forEach(b=>b.disabled=false)}},reducedMotion.matches?0:620);
 },loadingTime);
 }));
 clearSelection();actions.hidden=true;play.hidden=false;play.textContent='Let’s Play';status.textContent='Three rounds. Ready when you are.';tally();
