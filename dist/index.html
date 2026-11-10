@@ -772,12 +772,12 @@ html[data-theme="dark"] nav.t-tabs.has-scrolled{background-color:rgba(30,31,35,.
 @media (max-width: 420px) {
   .bento .intro { padding-inline: clamp(16px, calc(6vw - 3px), 22px); }
 }
-.rps:not(.is-idle).is-complete .rps-panel{position:relative;flex:1 0 auto;overflow:visible;background:none;box-shadow:none}
+.rps:not(.is-idle).is-complete .rps-panel{position:relative;flex:1 0 auto;min-block-size:128px;justify-content:center;overflow:visible;background:none;box-shadow:none}
 .rps.is-complete .rps-panel::before{content:"";position:absolute;inset:0;border-radius:inherit;background:rgba(255,255,255,.34);box-shadow:inset 0 -8px 20px rgba(0,0,0,.06),inset 0 8px 16px rgba(255,255,255,.5),inset 0 0 0 2px rgba(255,255,255,.44);pointer-events:none}
 .rps.is-presenting-result .rps-panel::before{animation:result-panel-in 1650ms linear both}
 @keyframes result-panel-in{0%,64%{opacity:0}100%{opacity:1}}
 .rps.is-complete .rps-confetti{z-index:8}
-.rps.is-complete .rps-outcome{position:relative;z-index:7}
+.rps.is-complete .rps-outcome{position:relative;z-index:7;font-size:clamp(36px,8vw,48px)}
 .rps-outcome-label{position:relative;display:inline-block;isolation:isolate;color:var(--rps-outcome-fill,#edf4ff);white-space:nowrap}
 .rps-outcome-label::before{content:attr(data-label);position:absolute;inset:0;z-index:-1;color:var(--rps-outcome-stroke,#23385a);-webkit-text-stroke:4px currentColor;filter:drop-shadow(0 3px 0 currentColor)}
 .rps[data-result="win"] .rps-outcome-label{--rps-outcome-fill:#baf263;--rps-outcome-stroke:#304b18}
