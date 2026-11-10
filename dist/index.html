@@ -80,8 +80,12 @@ nav .t-tab:active{scale:1}
 /* Slow, grouped intro with a matching staged tile reveal. */
 .intro-paragraph{transform:translateY(10px);transition:opacity 1400ms cubic-bezier(.22,1,.36,1),filter 1400ms cubic-bezier(.22,1,.36,1),transform 1600ms cubic-bezier(.22,1,.36,1)}
 .intro-paragraph.is-revealed{transform:translateY(0)}
-@keyframes intro-tile-in{from{opacity:0;filter:blur(6px);transform:translateY(12px)}to{opacity:1;filter:blur(0);transform:translateY(0)}}
-.intro-tile-reveal{animation:intro-tile-in 1600ms cubic-bezier(.22,1,.36,1) var(--tile-delay,0ms) both}
+@keyframes intro-tile-in{
+  from{opacity:0;transform:translateY(56px)}
+  24%{opacity:1}
+  to{opacity:1;transform:translateY(0)}
+}
+.intro-tile-reveal{animation:intro-tile-in 850ms cubic-bezier(.22,1,.36,1) var(--tile-delay,0ms) both}
 @media(prefers-reduced-motion:reduce){.intro-paragraph{transition:none;transform:none;filter:none;opacity:1}.intro-tile-reveal{animation:none}}
 /* Apply the initial state before the browser paints any intro copy. */
 html.intro-pending .intro>p,html.intro-pending .intro>h1{opacity:0;filter:blur(6px);transform:translateY(10px)}
@@ -261,7 +265,7 @@ html.intro-pending .intro-hands.is-greeting{animation:hand-greeting 1200ms cubic
 /* Keep the right-column intro reveal when its wrapper uses display:contents. */
 html.intro-pending .bento .current-role,html.intro-pending .bento .identity{opacity:0;visibility:hidden;pointer-events:none}
 }
-@media(width < 1072px){.bento>.column.intro-tile-reveal{animation:none}.bento>.column.intro-tile-reveal>.card{animation:intro-tile-in 1600ms cubic-bezier(.22,1,.36,1) var(--tile-delay,0ms) both}}
+@media(width < 1072px){.bento>.column.intro-tile-reveal{animation:none}.bento>.column.intro-tile-reveal>.card{animation:intro-tile-in 850ms cubic-bezier(.22,1,.36,1) var(--tile-delay,0ms) both}}
 @media(width < 1072px) and (prefers-reduced-motion:reduce){.bento>.column.intro-tile-reveal>.card{animation:none}}
 .noon-icon{position:relative;overflow:hidden;isolation:isolate}
 /* Shared mobile type scale for current and future tiles. */
