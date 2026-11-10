@@ -1,8 +1,7 @@
 (()=>{
 const game=document.querySelector('.rps');if(!game)return;
-const hasTouchPointer=matchMedia('(any-pointer: coarse)');
 let haptics;
-if(hasTouchPointer.matches){
+if(navigator.maxTouchPoints>0){
   import('./vendor/web-haptics/index.mjs')
     .then(({WebHaptics})=>{haptics=new WebHaptics()})
     .catch(()=>{});
@@ -78,10 +77,22 @@ function enterGame(){clearEmojiRain();celebrate?.reset();game.querySelector('.rp
 let entering=false;
 async function start(){if(entering)return;entering=true;const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;if(!reduce){const leaving=[play];if(game.classList.contains('is-idle'))leaving.push(game.querySelector('.rps-title'));await Promise.all(leaving.map((el,i)=>el.animate([{opacity:1,transform:'translateY(0)',filter:'blur(0)'},{opacity:0,transform:'translateY(-10px)',filter:'blur(3px)'}],{duration:240,delay:i*30,easing:'cubic-bezier(.4,0,.2,1)'}).finished.catch(()=>{})))}enterGame();entering=false}
 play.addEventListener('click',start);
+const touchReleaseTimes=new WeakMap();
+buttons.forEach(button=>button.addEventListener('pointerup',event=>{
+  if(event.pointerType==='touch')touchReleaseTimes.set(button,event.timeStamp);
+  else touchReleaseTimes.delete(button);
+}));
 buttons.forEach(button=>button.addEventListener('click',event=>{
+const releasedAt=touchReleaseTimes.get(button);
+touchReleaseTimes.delete(button);
 if(!started||busy||round>=3)return;
-if(event.pointerType==='touch'||event.sourceCapabilities?.firesTouchEvents){
-  haptics?.trigger('light').catch(()=>{});
+const isTouch=event.pointerType==='touch'||(!event.pointerType&&event.detail>0&&(
+  event.sourceCapabilities?.firesTouchEvents||
+  (releasedAt!==undefined&&event.timeStamp>=releasedAt&&event.timeStamp-releasedAt<500)
+));
+if(isTouch){
+  if(haptics)haptics.trigger(35,{intensity:1}).catch(()=>{});
+  else navigator.vibrate?.(35);
 }
 busy=true;game.classList.remove('hands-revealed');delete game.dataset.result;subtitle.textContent='Rock… paper… scissors…';game.querySelector('.rps-round').textContent=`Round ${round+1} of 3`;clearSelection();button.classList.add('is-selected');button.setAttribute('aria-pressed','true');buttons.forEach(b=>b.disabled=true);const yours=button.dataset.move,theirs=pattern[round];hand('rps-you','rock','Your hand',true);hand('rps-me','rock','My hand',true);status.textContent=`Round ${round+1} of 3 · Rock… paper… scissors…`;document.getElementById('rps-me').classList.remove('is-revealing');game.classList.add('is-playing');timer=setTimeout(()=>{game.classList.remove('is-playing','user-revealed');hand('rps-you',yours,'Your hand');hand('rps-me',theirs,'My hand');game.classList.add('hands-revealed');const opponent=document.getElementById('rps-me');opponent.classList.remove('is-revealing');void opponent.offsetWidth;opponent.classList.add('is-revealing');timer=setTimeout(async()=>{const result=yours===theirs?'draw':choices[(choices.indexOf(theirs)+1)%3]===yours?'win':'lose';clearSelection();const playerHand=document.getElementById('rps-you').closest('figure'),opponentHand=document.getElementById('rps-me').closest('figure');[playerHand,opponentHand].forEach(hand=>hand.classList.remove('round-winner','round-tie'));const celebrating=result==='draw'?[playerHand,opponentHand]:[result==='win'?playerHand:opponentHand];celebrating.forEach(hand=>{void hand.offsetWidth;hand.classList.add(result==='draw'?'round-tie':'round-winner')});await showRoundResult(result);celebrating.forEach(hand=>hand.classList.remove('round-winner','round-tie'));game.dataset.result=result;if(result==='win')you++;if(result==='lose')me++;if(result!=='draw')round++;else pattern[round]=choices[Math.floor(Math.random()*choices.length)];await tally(true);clearSelection();game.querySelector('.rps-round').textContent=`Round ${Math.min(round+1,3)} of 3`;const message=result==='draw'?'A tie. Replay this round.':result==='win'?'You win this round.':'This round is mine.';subtitle.textContent=result==='draw'?'It’s a tie!':result==='win'?'You win this round!':'I win this round!';busy=false;if(you===2||me===2||round===3){game.dataset.result=you===me?'draw':you>me?'win':'lose';subtitle.textContent=you===me?'A draw. Another match?':you>me?'You won the match!':'I won this match. Rematch?';started=false;const finalLayout=captureLayout();if(!matchMedia('(prefers-reduced-motion: reduce)').matches)actions.animate([{opacity:1,filter:'blur(0)'},{opacity:0,filter:'blur(4px)'}],{duration:180,fill:'forwards'});timer=setTimeout(()=>{game.classList.remove('is-activating');game.classList.add('is-complete');game.querySelector('.rps-outcome').textContent=you>me?'You Win':you<me?'You Lose':"It's a Tie";if(you>me)winConfetti();else if(you<me)loseConfetti();game.querySelector('.rps-replay-group').hidden=false;game.querySelector('.rps-replay-group').appendChild(play);actions.hidden=true;play.hidden=false;play.textContent='Play Again';status.textContent=(you===me?'Match drawn.':you>me?'You won the match!':'I won this match.')+` Final score: ${you} — ${me}.`;settleLayout(finalLayout);if(!matchMedia('(prefers-reduced-motion: reduce)').matches)play.animate([{opacity:0,filter:'blur(4px)',transform:'translateY(6px)'},{opacity:1,filter:'blur(0)',transform:'none'}],{duration:500,easing:'cubic-bezier(.22,1,.36,1)'});play.focus({preventScroll:true})},matchMedia('(prefers-reduced-motion: reduce)').matches?0:200)}else{game.classList.remove('hands-revealed');opponent.classList.remove('is-revealing');hand('rps-you','rock','Your hand',true);hand('rps-me','rock','My hand',true);delete game.dataset.result;game.querySelector('.rps-round').textContent=`Round ${round+1} of 3`;subtitle.textContent='Pick your move';status.textContent=`${message} Round ${round+1} of 3 · Pick your move.`;busy=false;buttons.forEach(b=>b.disabled=false)}},1100)},matchMedia('(prefers-reduced-motion: reduce)').matches?100:1600)}));
 clearSelection();actions.hidden=true;play.hidden=false;play.textContent='Let’s Play';status.textContent='Three rounds. Ready when you are.';tally();
