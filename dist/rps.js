@@ -79,6 +79,7 @@ async function setScoreDigits(group,value,animate){
   const digit=document.createElement('span');
   digit.className='t-digit';
   digit.textContent=next;
+  digit.dataset.score=next;
   digit.setAttribute('aria-hidden','true');
   group.classList.add('t-digit-group');
   group.setAttribute('aria-label',next);

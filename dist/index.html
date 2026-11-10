@@ -642,12 +642,27 @@ html[data-theme="dark"] nav.t-tabs.has-scrolled{background-color:rgba(30,31,35,.
   transform-origin:50% 70%;
 }
 .rps-score-box strong.score-changing .t-digit{
+  position:relative;
+  isolation:isolate;
   color:inherit;
-  -webkit-text-stroke:inherit;
+}
+.rps-score-box strong.score-changing .t-digit::before{
+  content:attr(data-score);
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  color:#292d20;
+  -webkit-text-stroke:2.5px currentColor;
+  filter:drop-shadow(0 0 4px #e9ff9b90);
+  animation:score-outline 1000ms cubic-bezier(.22,1,.36,1) both;
 }
 @keyframes score-emphasis{
-  0%,100%{transform:scale(1);color:#141414;-webkit-text-stroke:0 transparent;text-shadow:none}
-  20%,62%{transform:scale(1.375);color:#9ed452;-webkit-text-stroke:1.25px #292d20;text-shadow:1px 1px 2px #ffdc4926,0 0 8px #e9ff9b90}
+  0%,100%{transform:scale(1);color:#141414}
+  20%,62%{transform:scale(1.375);color:#9ed452}
+}
+@keyframes score-outline{
+  0%,100%{opacity:0}
+  20%,62%{opacity:1}
 }
 /* Mobile controls use proportional columns and compact, readable sizing. */
 @media(max-width:650px){
@@ -768,4 +783,4 @@ const themeToggle=document.querySelector('.theme-toggle');function updateThemeTo
 document.querySelector('.dev-replay').addEventListener('click',()=>{const url=new URL(location.href);url.hash='';url.searchParams.set('intro','1');location.assign(url.href)});
 const introTile=document.querySelector('.intro'),introHand=introTile.querySelector('.intro-hands');introTile.addEventListener('pointerenter',event=>{if(event.pointerType!=='mouse'||document.documentElement.classList.contains('intro-pending')||matchMedia('(prefers-reduced-motion: reduce)').matches)return;introHand.classList.remove('is-greeting','is-hover-waving');void introHand.offsetWidth;introHand.classList.add('is-hover-waving')});introHand.addEventListener('animationend',event=>{if(event.animationName==='hand-hover-wave')introHand.classList.remove('is-hover-waving')});
 const skillsTile=document.querySelector('.skills');if(document.documentElement.classList.contains('intro-pending')){const introStateObserver=new MutationObserver(()=>{if(!document.documentElement.classList.contains('intro-pending')){skillsTile.classList.add('tags-in-motion');introStateObserver.disconnect()}});introStateObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']})}
-</script><script src="atmos-sky.js?v=frame-pacing"></script><script src="confetti.browser.min.js"></script><script src="rps.js?v=decoded-hands"></script><script type="module" src="smooth-corners.js"></script></body></html>
+</script><script src="atmos-sky.js?v=frame-pacing"></script><script src="confetti.browser.min.js"></script><script src="rps.js?v=score-outline"></script><script type="module" src="smooth-corners.js"></script></body></html>
