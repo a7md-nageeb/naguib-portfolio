@@ -826,6 +826,20 @@ html[data-theme="dark"] nav.t-tabs.has-scrolled{background-color:rgba(30,31,35,.
   65%,100%{background-position:0 0;opacity:0}
 }
 .rps.is-presenting-result .rps-controls{visibility:hidden}
+@media (prefers-reduced-motion: no-preference) {
+  .identity.intro-tile-reveal .rps.is-idle > :is(.rps-title,.rps-panel,.rps-reset) {
+    animation:tag-fall 1450ms calc(var(--tile-delay,0ms) + var(--tag-delay)) both;
+  }
+  .identity.intro-tile-reveal .rps.is-idle > .rps-title {
+    --tag-delay:120ms;--tag-x:-18px;--tag-y:-38px;--tag-tilt:-2deg;
+  }
+  .identity.intro-tile-reveal .rps.is-idle > .rps-panel {
+    --tag-delay:340ms;--tag-x:22px;--tag-y:26px;--tag-tilt:1.5deg;
+  }
+  .identity.intro-tile-reveal .rps.is-idle > .rps-reset {
+    --tag-delay:560ms;--tag-x:-18px;--tag-y:30px;--tag-tilt:-1.5deg;
+  }
+}
 .intro-loader{display:none}
 html.intro-loading body > :not(.intro-loader){visibility:hidden}
 html.intro-loading .intro-loader{position:fixed;inset:0;z-index:100;display:grid;place-content:center;justify-items:center;gap:14px;background:#fff;color:#435168;font:500 15px/1.5 'Nata Sans',sans-serif;letter-spacing:0}
