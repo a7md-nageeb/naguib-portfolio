@@ -321,7 +321,7 @@ nav.is-compact{background:rgba(255,255,255,.42);backdrop-filter:blur(24px) satur
 .skill-badge:nth-child(2){--tag-delay:750ms;--tag-tilt:3deg;--float-time:6.4s}
 .skill-badge:nth-child(3){--tag-delay:0ms;--tag-tilt:-3deg;--float-time:6.8s}
 .skill-badge:nth-child(4){--tag-delay:250ms;--tag-tilt:2deg;--float-time:6.1s}
-.skills.tags-in-motion .skill-badge{animation:tag-fall 1100ms var(--tag-delay) both}
+.skills.tags-in-motion .skill-badge{animation:tag-fall 1450ms var(--tag-delay) both}
 @keyframes tag-fall{0%{transform:translateY(-80px) rotate(calc(var(--tag-tilt) * 2));animation-timing-function:cubic-bezier(.22,1,.36,1)}75%{transform:translateY(1px) rotate(calc(var(--tag-tilt) * .2));animation-timing-function:ease-out}100%{transform:translateY(0) rotate(0)}}
 @keyframes tag-float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(calc(var(--tag-tilt) * .3))}}
 @media(prefers-reduced-motion:reduce){.skills.tags-in-motion .skill-badge{animation:none}}
@@ -332,14 +332,14 @@ nav.is-compact{background:rgba(255,255,255,.42);backdrop-filter:blur(24px) satur
 @media(prefers-reduced-motion:reduce){.skill-badge{transition:none}.skill-badge:hover,.skill-badge:active{translate:none;rotate:none;scale:1}}
 @media(max-width:650px){.skill-icon img{width:28px;height:28px;object-fit:contain}}
 /* Settle tags on touch screens to avoid subpixel shimmer on their edges. */
-@media(max-width:650px),(hover:none){.skills.tags-in-motion .skill-badge{animation:tag-fall 1100ms var(--tag-delay) both}}
+@media(max-width:650px),(hover:none){.skills.tags-in-motion .skill-badge{animation:tag-fall 1450ms var(--tag-delay) both}}
 @media(prefers-reduced-motion:reduce){.skills.tags-in-motion .skill-badge{animation:none}}
 /* Tags are pushed inward from their corresponding corners. */
 .skill-badge:nth-child(1){--tag-x:-90px;--tag-y:-55px}
 .skill-badge:nth-child(2){--tag-x:90px;--tag-y:-55px}
 .skill-badge:nth-child(3){--tag-x:-90px;--tag-y:55px}
 .skill-badge:nth-child(4){--tag-x:90px;--tag-y:55px}
-@keyframes tag-fall{0%{transform:translate(var(--tag-x),var(--tag-y)) rotate(calc(var(--tag-tilt) * 2));animation-timing-function:cubic-bezier(.22,1,.36,1)}80%{transform:translate(0,0) rotate(calc(var(--tag-tilt) * .15));animation-timing-function:ease-out}100%{transform:translate(0,0) rotate(0)}}
+@keyframes tag-fall{0%{transform:translate(var(--tag-x),var(--tag-y)) rotate(calc(var(--tag-tilt) * 2));animation-timing-function:cubic-bezier(.25,.7,.35,1)}85%{transform:translate(0,0) rotate(calc(var(--tag-tilt) * .15));animation-timing-function:ease-out}100%{transform:translate(0,0) rotate(0)}}
 /* Matching pale surfaces for each skills category. */
 .skills{transition:background-color 800ms cubic-bezier(.4,0,.2,1)}
 @media(hover:hover){
