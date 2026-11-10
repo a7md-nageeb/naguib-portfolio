@@ -817,7 +817,7 @@ if(document.documentElement.classList.contains('intro-pending')){
       revealTiles.forEach((el,i)=>{
         if(!el)return;
         el.classList.add('intro-tile-reveal');
-        el.style.setProperty('--tile-delay',i*500+'ms');
+        el.style.setProperty('--tile-delay',i*700+'ms');
       });
     }
     root.classList.remove('intro-pending','intro-loading');
