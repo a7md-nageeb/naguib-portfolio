@@ -840,38 +840,37 @@ html.intro-loading .intro-loader{visibility:visible;pointer-events:auto;transiti
 html.intro-loading .intro-loader-panels span{transform:none;transition:none}
 .intro-loader-stage{
   position:relative;width:min(100% - 32px,360px);height:88px;overflow:hidden;
-  opacity:0;transform:translateY(-8px);transition:opacity 150ms,transform 200ms
 }
-html.intro-loading .intro-loader-stage{opacity:1;transform:none}
-.intro-loader-stage .skill-list{display:grid;height:100%;place-items:center}
+.intro-loader-stage .skill-list{display:grid;height:100%;place-items:center;transform:translateY(-100%);transition:transform 320ms cubic-bezier(.45,0,.3,1)}
+html.intro-loading .intro-loader-stage .skill-list{transform:none;transition:none}
 .intro-loader-stage .skill-badge{
-  grid-area:1/1;opacity:0;pointer-events:none;
+  grid-area:1/1;transform:translateY(88px);pointer-events:none;
   font-size:clamp(18px,5vw,26px);line-height:1.25;gap:10px;
   --loader-tag-delay:0ms
 }
 .intro-loader-stage .skill-icon{width:clamp(36px,10vw,48px);height:clamp(36px,10vw,48px)}
 .intro-loader-stage .skill-icon img{width:70%;height:70%}
-.intro-loader-stage .skill-badge:nth-child(2){--loader-tag-delay:460ms}
-.intro-loader-stage .skill-badge:nth-child(3){--loader-tag-delay:920ms}
-.intro-loader-stage .skill-badge:nth-child(4){--loader-tag-delay:1380ms}
-html.intro-loading .intro-loader-stage .skill-badge{
-  animation:loader-tag-cycle 460ms cubic-bezier(.3,.75,.35,1) var(--loader-tag-delay) both
+.intro-loader-stage .skill-badge:nth-child(2){--loader-tag-delay:650ms}
+.intro-loader-stage .skill-badge:nth-child(3){--loader-tag-delay:1300ms}
+.intro-loader-stage .skill-badge:nth-child(4){--loader-tag-delay:1950ms}
+html.intro-pending .intro-loader-stage .skill-badge{
+  animation:loader-tag-cycle 650ms cubic-bezier(.3,.75,.35,1) var(--loader-tag-delay) both
 }
-html.intro-loading .intro-loader-stage .skill-badge:last-child{animation-name:loader-tag-settle}
+html.intro-pending .intro-loader-stage .skill-badge:last-child{animation-name:loader-tag-settle}
 @keyframes loader-tag-cycle{
-  0%{opacity:0;transform:translateY(30px) rotate(-4deg)}
-  29%,68%{opacity:1;transform:translateY(0) rotate(0)}
-  100%{opacity:0;transform:translateY(-30px) rotate(3deg)}
+  0%{transform:translateY(88px) rotate(-3deg)}
+  30%,66%{transform:translateY(0) rotate(0)}
+  100%{transform:translateY(-88px) rotate(2deg)}
 }
 @keyframes loader-tag-settle{
-  from{opacity:0;transform:translateY(30px) rotate(-4deg)}
-  to{opacity:1;transform:translateY(0) rotate(0)}
+  from{transform:translateY(88px) rotate(-3deg)}
+  to{transform:translateY(0) rotate(0)}
 }
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .intro-loader,.intro-loader-panels span,.intro-loader-stage{transition:none}
-  html.intro-loading .intro-loader-stage .skill-badge{animation:none}
-  .intro-loader-stage .skill-badge:first-child{opacity:1}
+  .intro-loader,.intro-loader-panels span,.intro-loader-stage .skill-list{transition:none}
+  html.intro-pending .intro-loader-stage .skill-badge{animation:none}
+  .intro-loader-stage .skill-badge:first-child{transform:none}
 }
 </style></head><body><div class="intro-loader" role="status" aria-label="Loading"><div class="intro-loader-panels" aria-hidden="true"><span style="--slice-delay:0ms"></span><span style="--slice-delay:24ms"></span><span style="--slice-delay:48ms"></span><span style="--slice-delay:72ms"></span><span style="--slice-delay:96ms"></span><span style="--slice-delay:120ms"></span></div><div class="intro-loader-stage" aria-hidden="true"></div></div><button type="button" class="dev-replay" aria-label="Replay intro animation">↻ Replay intro</button><nav class="t-tabs" aria-label="Main navigation"><span class="nav-pill t-tabs-pill" aria-hidden="true"></span><a class="active" href="#home">Home</a><a href="#work">Work</a><a href="#contact">Contact Me</a><span class="nav-action-divider" aria-hidden="true"></span><button class="nav-resume" type="button" disabled title="Resume PDF coming soon" aria-label="Download resume — file not yet available"><img src="images/resume-download.svg" width="16" height="16" alt=""><span>Resume</span></button></nav><main id="home"><div class="bento"><div class="column"><section class="card intro"><img class="intro-hands" src="images/hands.svg" fetchpriority="high" alt="" width="43.404" height="64"><p>Hello there,</p><h1><strong>I’m Ahmed Naguib,</strong> a design engineer who loves making things.</h1><p>I care about the small details, the way things looks, feels, and responds.</p><p>Curiosity keeps me exploring. Care for the craft keeps me refining, from the first idea to the smallest detail.</p></section><section id="articles" class="card writing skills" aria-label="Design and development skills"><ul class="skill-list"><li class="skill-badge skill-ux"><span class="skill-icon"><img src="images/skill-navigation.svg" width="40" height="40" alt=""></span><span>User Experience</span></li><li class="skill-badge skill-ui"><span class="skill-icon"><img src="images/skill-figma.svg" width="40" height="40" alt=""></span><span>UI</span></li><li class="skill-badge skill-brand"><span class="skill-icon"><img src="images/skill-palette.svg" width="40" height="40" alt=""></span><span>Branding</span></li><li class="skill-badge skill-code"><span class="skill-icon"><img src="images/skill-code.svg" width="40" height="40" alt=""></span><span>Coding</span></li></ul></section></div><div class="column"><section class="card current-role"><p class="role-label">Currently</p><div class="role-row"><a class="noon-icon" href="https://www.noon.com/" target="_blank" rel="noopener noreferrer" aria-label="Visit noon (opens in a new tab)"><img src="images/noon-mark.svg" width="40" height="40" alt=""></a><div class="role-details"><h2>Senior Product Designer <span class="muted">at</span> <span class="noon">noon</span></h2><p>Nov 2022 - Present</p></div></div></section><section class="card identity" aria-label="Animated blue sky"><canvas class="atmos-sky" aria-hidden="true"></canvas><div class="rps is-idle"><div class="rps-heading"><span>A little friendly competition</span><span id="rps-score">You 0 · Me 0</span></div><h2 class="rps-title"><img src="images/rps-title-vector.svg" width="468" height="56" alt="Rock paper scissors?"></h2><p id="rps-status" role="status">Pick your move. I’ll pick mine.</p><canvas class="rps-confetti" aria-hidden="true"></canvas><div class="rps-panel"><div class="rps-outcome" role="status"><span class="rps-outcome-label"></span></div><div class="rps-panel-heading"><p class="rps-round">Round 1 of 3</p><p class="rps-subtitle" aria-live="polite">Pick your move</p></div><div class="rps-arena"><figure><img id="rps-you" src="images/rps-loading.svg" alt="Your hand: rock"><figcaption>You</figcaption></figure><span class="rps-vs">vs</span><figure><img id="rps-me" src="images/rps-loading.svg" alt="Opponent hand: rock"><figcaption>Me</figcaption></figure></div></div><div class="rps-controls"><div class="rps-round-overlay" aria-hidden="true"><span></span></div><div class="rps-replay-group" hidden><p>Another match?</p></div><div class="rps-weapon"><p>Pick your Move</p><div class="rps-choices" aria-label="Choose your move"><button type="button" data-move="rock"><span class="rps-choice-art"><img src="images/rps-choice-rock.svg" alt=""></span><span>Rock</span></button><span class="rps-choice-divider" aria-hidden="true"></span><button type="button" data-move="paper"><span class="rps-choice-art"><img src="images/rps-choice-paper.svg" alt=""></span><span>Paper</span></button><span class="rps-choice-divider" aria-hidden="true"></span><button type="button" data-move="scissors"><span class="rps-choice-art"><img src="images/rps-choice-scissors.svg" alt=""></span><span>Scissor</span></button></div></div><div class="rps-score-group"><p>Score</p><div class="rps-score-box"><div><strong id="rps-your-score">0</strong><span>You</span></div><div><strong id="rps-my-score">0</strong><span>Me</span></div></div></div></div><button type="button" class="rps-reset">Reset score</button></div></section></div></div><section class="card contact" id="work" aria-labelledby="work-title"><div><h2 id="work-title">Work</h2><p>Coming soon</p></div></section><section class="card contact" id="contact" aria-labelledby="contact-title"><div><h2 id="contact-title">Contact Me</h2><p>Coming soon</p></div></section><footer><span>© <span id="year"></span> Ahmed Naguib</span><div><button class="theme-toggle sound-toggle" type="button" aria-label="Switch to dark theme">Dark mode</button><button class="intro-replay sound-toggle" type="button">Replay intro</button><button class="sound-toggle" type="button" aria-pressed="true">Sound on</button><a href="https://www.linkedin.com/in/ahmed-nageeb-7080b9184" target="_blank" rel="noreferrer">LinkedIn ↗</a><a href="#home">Back to top ↑</a></div></footer></main><script>document.getElementById('year').textContent=new Date().getFullYear();document.querySelectorAll('nav a').forEach(a=>a.addEventListener('click',()=>{document.querySelector('nav .active')?.classList.remove('active');a.classList.add('active')}));const navigation=document.querySelector('nav');const mobileNavigation=matchMedia('(max-width:650px)');
 let scrolled=false;
@@ -986,11 +985,11 @@ if(document.documentElement.classList.contains('intro-pending')){
     document.fonts.load('700 24px Nunito'),
     document.fonts.load('300 18px "Nata Sans"'),
     document.fonts.load('500 18px "Nata Sans"'),
-    new Promise(resolve=>timers.push(setTimeout(resolve,2000)))
+    new Promise(resolve=>timers.push(setTimeout(resolve,2800)))
   ]);
   Promise.race([
     ready,
-    new Promise(resolve=>{assetDeadline=setTimeout(resolve,2500)})
+    new Promise(resolve=>{assetDeadline=setTimeout(resolve,3300)})
   ]).then(()=>{
     clearTimeout(assetDeadline);
     if(motion.matches)finishIntro();
