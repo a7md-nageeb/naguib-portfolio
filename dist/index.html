@@ -835,6 +835,10 @@ html.intro-loading .intro-loader{
 }
 .intro-loader-columns{position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));pointer-events:none}
 .intro-loader-columns span{background:var(--loader-background,#f7f8fa)}
+@media(max-width:650px){
+  .intro-loader-columns{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .intro-loader-columns span:nth-child(n+4){display:none}
+}
 .intro-loader-content{position:relative;display:grid;justify-items:center;gap:10px}
 html.intro-loader-exiting .intro-loader{pointer-events:none}
 html.intro-loader-exiting .intro-loader-columns span{
@@ -1019,7 +1023,8 @@ if(document.documentElement.classList.contains('intro-pending')){
     if(finished)return;
     showLoaderPercent(100);
     if(!motion.matches)root.classList.add('intro-loader-exiting');
-    timers.push(setTimeout(motion.matches?finishIntro:startIntro,motion.matches?320:820));
+    const exitDuration=matchMedia('(max-width: 650px)').matches?640:820;
+    timers.push(setTimeout(motion.matches?finishIntro:startIntro,motion.matches?320:exitDuration));
   });
 }
 const themeToggle=document.querySelector('.theme-toggle');function updateThemeToggle(){const dark=document.documentElement.dataset.theme==='dark';themeToggle.textContent=dark?'Light mode':'Dark mode';themeToggle.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme')}updateThemeToggle();themeToggle.addEventListener('click',()=>{const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('portfolio-theme',theme)}catch{}updateThemeToggle()});
