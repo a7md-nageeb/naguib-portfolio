@@ -2,15 +2,37 @@ const card = document.querySelector('.skills');
 const slots = [...card.querySelectorAll('.skill-slot')];
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
-function dropDistance(slot) {
-  return Math.max(0, card.getBoundingClientRect().bottom - slot.getBoundingClientRect().bottom - 10);
+const landings = new Map();
+
+function updateLandings() {
+  const floor = card.getBoundingClientRect().bottom - 10;
+  const positions = slots.map(slot => ({ slot, rect: slot.getBoundingClientRect() }));
+  const obstacles = positions
+    .filter(({ slot }) => !slot.classList.contains('is-detached'))
+    .map(({ rect }) => rect);
+  const detached = positions
+    .filter(({ slot }) => slot.classList.contains('is-detached'))
+    .sort((a, b) => b.rect.bottom - a.rect.bottom);
+
+  for (const { slot, rect } of detached) {
+    let bottom = floor;
+    for (const obstacle of obstacles) {
+      if (obstacle.top >= rect.bottom && obstacle.left < rect.right && obstacle.right > rect.left) {
+        bottom = Math.min(bottom, obstacle.top);
+      }
+    }
+
+    const stacked = bottom < floor;
+    const drop = Math.max(0, bottom - rect.bottom);
+    landings.set(slot, { drop, stacked });
+    slot.style.setProperty('--skill-drop', `${drop}px`);
+    slot.style.setProperty('--landing-angle', stacked ? '0deg' : 'var(--fallen-angle)');
+    const tiltClearance = stacked ? 0 : Math.min(7, rect.width * 0.05);
+    obstacles.push({ left: rect.left, right: rect.right, top: rect.top + drop - tiltClearance });
+  }
 }
 
-new ResizeObserver(() => {
-  for (const slot of slots) {
-    slot.style.setProperty('--skill-drop', `${dropDistance(slot)}px`);
-  }
-}).observe(card);
+new ResizeObserver(updateLandings).observe(card);
 
 for (const slot of slots) {
   const badge = slot.querySelector('button');
@@ -20,10 +42,9 @@ for (const slot of slots) {
 
   function moveTag(fallen, from) {
     movement?.cancel();
-    const drop = dropDistance(slot);
-    slot.style.setProperty('--skill-drop', `${drop}px`);
     slot.classList.add('has-moved', 'is-moving');
     slot.classList.toggle('is-detached', fallen);
+    updateLandings();
     badge.setAttribute('aria-pressed', String(fallen));
     badge.style.removeProperty('transform');
 
@@ -33,12 +54,13 @@ for (const slot of slots) {
     }
 
     const end = getComputedStyle(badge).transform;
-    const angle = getComputedStyle(slot).getPropertyValue('--fallen-angle').trim();
+    const { drop, stacked } = landings.get(slot) ?? { drop: 0, stacked: false };
+    const angle = stacked ? '0deg' : getComputedStyle(slot).getPropertyValue('--fallen-angle').trim();
     const frames = fallen && !from ? [
       { transform: 'none', easing: 'ease-in' },
-      { transform: 'translateY(7px) rotate(-13deg)', offset: 0.2, easing: 'cubic-bezier(.5,0,.85,.5)' },
-      { transform: `translateY(${drop + 4}px) rotate(${angle})`, offset: 0.72, easing: 'ease-out' },
-      { transform: `translateY(${drop - 5}px) rotate(${angle})`, offset: 0.85, easing: 'ease-in' },
+      { transform: `translateY(${Math.min(7, drop * 0.3)}px) rotate(-13deg)`, offset: 0.2, easing: 'cubic-bezier(.5,0,.85,.5)' },
+      { transform: `translateY(${drop + (stacked ? 0 : 4)}px) rotate(${angle})`, offset: 0.72, easing: 'ease-out' },
+      { transform: `translateY(${Math.max(0, drop - 5)}px) rotate(${angle})`, offset: 0.85, easing: 'ease-in' },
       { transform: end }
     ] : [{ transform: from }, { transform: end }];
     const animation = badge.animate(frames, {
@@ -82,7 +104,7 @@ for (const slot of slots) {
       slot.classList.remove('is-moving');
       slot.classList.add('is-dragging');
     }
-    const drop = dropDistance(slot);
+    const drop = landings.get(slot).drop;
     badge.style.transform = `translate(${x}px,${drop + y}px)`;
   });
 
