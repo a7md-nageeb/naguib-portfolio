@@ -1,11 +1,18 @@
-const list = document.querySelector('.skills .skill-list');
+const card = document.querySelector('.skills');
+const slots = [...card.querySelectorAll('.skill-slot')];
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-const updateDropDistance = () => {
-  list.style.setProperty('--skill-drop', `${list.offsetHeight + 22}px`);
-};
-new ResizeObserver(updateDropDistance).observe(list);
 
-for (const slot of list.querySelectorAll('.skill-slot')) {
+function dropDistance(slot) {
+  return Math.max(0, card.getBoundingClientRect().bottom - slot.getBoundingClientRect().bottom - 10);
+}
+
+new ResizeObserver(() => {
+  for (const slot of slots) {
+    slot.style.setProperty('--skill-drop', `${dropDistance(slot)}px`);
+  }
+}).observe(card);
+
+for (const slot of slots) {
   const badge = slot.querySelector('button');
   let movement;
   let drag;
@@ -13,7 +20,8 @@ for (const slot of list.querySelectorAll('.skill-slot')) {
 
   function moveTag(fallen, from) {
     movement?.cancel();
-    updateDropDistance();
+    const drop = dropDistance(slot);
+    slot.style.setProperty('--skill-drop', `${drop}px`);
     slot.classList.add('has-moved', 'is-moving');
     slot.classList.toggle('is-detached', fallen);
     badge.setAttribute('aria-pressed', String(fallen));
@@ -25,7 +33,6 @@ for (const slot of list.querySelectorAll('.skill-slot')) {
     }
 
     const end = getComputedStyle(badge).transform;
-    const drop = list.offsetHeight + 22;
     const angle = getComputedStyle(slot).getPropertyValue('--fallen-angle').trim();
     const frames = fallen && !from ? [
       { transform: 'none', easing: 'ease-in' },
@@ -75,7 +82,7 @@ for (const slot of list.querySelectorAll('.skill-slot')) {
       slot.classList.remove('is-moving');
       slot.classList.add('is-dragging');
     }
-    const drop = list.offsetHeight + 22;
+    const drop = dropDistance(slot);
     badge.style.transform = `translate(${x}px,${drop + y}px)`;
   });
 

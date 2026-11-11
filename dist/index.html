@@ -839,12 +839,11 @@ html.intro-loader-exiting .intro-loader{transform:translateY(-100%);transition:t
 .intro-loader-label{margin:0;font-size:inherit;line-height:1.15;font-weight:400}
 .intro-loader-percent{font-size:inherit;line-height:1.2;font-weight:400;font-variant-numeric:tabular-nums;color:#596579;--digit-dur:800ms;--digit-distance:6px;--digit-blur:3px;--digit-ease:cubic-bezier(.22,.75,.3,1)}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}html.intro-loader-exiting .intro-loader{transition:none}}
-/* A detached badge leaves its slot in the layout and lands in a row below it. */
+/* A detached badge keeps its slot and lands at the bottom of the card. */
 .skill-slot{position:relative;width:max-content;--fallen-angle:-6deg;border-radius:16px}
 .skill-slot:nth-child(even){--fallen-angle:6deg}
 .skill-slot .skill-badge{position:relative;border:0;cursor:pointer}
 .skill-slot .skill-badge:focus-visible{outline:2px solid currentColor;outline-offset:3px}
-.skill-list:has(.skill-slot:is(.is-detached,.is-moving,.is-dragging)){margin-bottom:var(--skill-drop,0px)}
 .skill-slot.is-detached{background:#d4d6da;box-shadow:inset 0 1px 4px #25272b26}
 html[data-theme="dark"] .skill-slot.is-detached{background:#393b43}
 .skills.tags-in-motion .skill-slot.has-moved .skill-badge{animation:none}
@@ -1011,4 +1010,4 @@ const themeToggle=document.querySelector('.theme-toggle');function updateThemeTo
 document.querySelector('.dev-replay').addEventListener('click',()=>{const url=new URL(location.href);url.hash='';url.searchParams.set('intro','1');location.assign(url.href)});
 const introTile=document.querySelector('.intro'),introHand=introTile.querySelector('.intro-hands');introTile.addEventListener('pointerenter',event=>{if(event.pointerType!=='mouse'||document.documentElement.classList.contains('intro-pending')||matchMedia('(prefers-reduced-motion: reduce)').matches)return;introHand.classList.remove('is-greeting','is-hover-waving');void introHand.offsetWidth;introHand.classList.add('is-hover-waving')});introHand.addEventListener('animationend',event=>{if(event.animationName==='hand-hover-wave')introHand.classList.remove('is-hover-waving')});
 const skillsTile=document.querySelector('.skills');if(document.documentElement.classList.contains('intro-pending')){const introStateObserver=new MutationObserver(()=>{if(!document.documentElement.classList.contains('intro-pending')){skillsTile.classList.add('tags-in-motion');introStateObserver.disconnect()}});introStateObserver.observe(document.documentElement,{attributes:true,attributeFilter:['class']})}
-</script><script src="atmos-sky.js?v=frame-pacing"></script><script src="confetti.browser.min.js"></script><script src="rps.js?v=result-shine-slow"></script><script type="module" src="smooth-corners.js"></script><script type="module" src="hanging-skills.js"></script></body></html>
+</script><script src="atmos-sky.js?v=frame-pacing"></script><script src="confetti.browser.min.js"></script><script src="rps.js?v=result-shine-slow"></script><script type="module" src="smooth-corners.js"></script><script type="module" src="hanging-skills.js?v=fixed-card"></script></body></html>
