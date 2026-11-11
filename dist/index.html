@@ -838,13 +838,13 @@ html.intro-loading .intro-loader{
 .intro-loader-content{position:relative;display:grid;justify-items:center;gap:10px}
 html.intro-loader-exiting .intro-loader{pointer-events:none}
 html.intro-loader-exiting .intro-loader-columns span{
-  transform:translateY(calc(-1 * var(--loader-exit-travel,100%)));filter:blur(var(--loader-exit-blur,8px));
-  transition:transform var(--loader-exit-time,520ms) var(--loader-exit-ease,cubic-bezier(.42,0,.22,1)),filter var(--loader-exit-time,520ms) ease;
+  transform:translateY(calc(-1 * var(--loader-exit-travel,100%)));
+  transition:transform var(--loader-exit-time,520ms) var(--loader-exit-ease,cubic-bezier(.42,0,.22,1));
   transition-delay:calc(var(--column) * var(--loader-column-stagger,60ms))
 }
 html.intro-loader-exiting .intro-loader-content{
-  opacity:0;transform:translateY(-36px);filter:blur(var(--loader-exit-blur,8px));
-  transition:opacity var(--loader-exit-time,520ms) ease,transform var(--loader-exit-time,520ms) var(--loader-exit-ease,cubic-bezier(.42,0,.22,1)),filter var(--loader-exit-time,520ms) ease
+  opacity:0;transform:translateY(-36px);
+  transition:opacity var(--loader-exit-time,520ms) ease,transform var(--loader-exit-time,520ms) var(--loader-exit-ease,cubic-bezier(.42,0,.22,1))
 }
 .intro-loader img{display:block;width:min(56vw,38svh,240px);height:auto;margin-bottom:10px}
 .intro-loader-copy{display:flex;align-items:baseline;justify-content:center;gap:16px;font-size:clamp(30px,7vw,44px)}
