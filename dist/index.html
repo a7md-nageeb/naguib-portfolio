@@ -81,9 +81,9 @@ nav .t-tab:active{scale:1}
 .intro-paragraph{transform:translateY(10px);transition:opacity 1400ms cubic-bezier(.22,1,.36,1),filter 1400ms cubic-bezier(.22,1,.36,1),transform 1600ms cubic-bezier(.22,1,.36,1)}
 .intro-paragraph.is-revealed{transform:translateY(0)}
 @keyframes intro-tile-in{
-  from{opacity:0;transform:translateY(56px)}
+  from{opacity:0;filter:blur(6px);transform:translateY(56px)}
   24%{opacity:1}
-  to{opacity:1;transform:translateY(0)}
+  to{opacity:1;filter:none;transform:translateY(0)}
 }
 .intro-tile-reveal{animation:intro-tile-in 850ms cubic-bezier(.22,1,.36,1) var(--tile-delay,0ms) both}
 @media(prefers-reduced-motion:reduce){.intro-paragraph{transition:none;transform:none;filter:none;opacity:1}.intro-tile-reveal{animation:none}}
