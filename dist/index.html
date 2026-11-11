@@ -850,7 +850,7 @@ html.intro-loader-exiting .intro-loader{transform:translateY(-100%);transition:t
 .skill-slot.is-detached::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;background:#d4d6da;pointer-events:none}
 html[data-theme="dark"] .skill-slot.is-detached::before{background:#393b43}
 .skills.tags-in-motion .skill-slot.has-moved .skill-badge{animation:none}
-.skill-slot.has-moved .skill-badge{translate:none;rotate:none;scale:1;transition:none}
+.skill-slot:is(.is-moving,.is-dragging) .skill-badge{translate:none;rotate:none;scale:1;transition:none}
 .skill-slot.is-detached .skill-badge{
   transform:translateY(var(--skill-drop,0px)) rotate(var(--fallen-angle));
   touch-action:none;cursor:grab;box-shadow:0 4px 10px #25272b30
