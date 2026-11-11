@@ -833,7 +833,7 @@ html.intro-loading .intro-loader{
   justify-items:center;gap:10px;padding:24px;background:#f7f8fa;color:#23304a;
   text-align:center;font-family:'Nata Sans',sans-serif
 }
-html.intro-loader-exiting .intro-loader{transform:translateY(-100%);transition:transform 320ms cubic-bezier(.55,0,.25,1);pointer-events:none}
+html.intro-loader-exiting .intro-loader{transform:translateY(-100%);transition:transform 320ms cubic-bezier(.32,.08,.22,1);pointer-events:none}
 .intro-loader img{display:block;width:min(56vw,38svh,250px);height:auto;margin-bottom:10px}
 .intro-loader-copy{display:flex;align-items:baseline;justify-content:center;gap:12px}
 .intro-loader-label{margin:0;font-size:clamp(30px,7vw,44px);line-height:1.15;font-weight:400}
@@ -962,9 +962,9 @@ if(document.documentElement.classList.contains('intro-pending')){
     paragraphs.forEach(el=>el.classList.add('intro-paragraph'));
     intro.classList.add('stream-ready');
     root.classList.remove('intro-loading','intro-loader-exiting');
-    timers.push(setTimeout(()=>hand.classList.add('is-greeting'),200));
+    timers.push(setTimeout(()=>hand.classList.add('is-greeting'),360));
     timers.push(setTimeout(()=>intro.classList.add('gradient-revealed'),250));
-    paragraphs.forEach((paragraph,i)=>timers.push(setTimeout(()=>paragraph.classList.add('is-revealed'),i===0?200:i===1?1600:3700)));
+    paragraphs.forEach((paragraph,i)=>timers.push(setTimeout(()=>paragraph.classList.add('is-revealed'),i===0?360:i===1?1600:3700)));
     timers.push(setTimeout(finishIntro,5600));
   }
 
