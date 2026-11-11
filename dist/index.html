@@ -839,12 +839,12 @@ html.intro-loading .intro-loader{
 html.intro-loader-exiting .intro-loader{pointer-events:none}
 html.intro-loader-exiting .intro-loader-columns span{
   transform:translateY(calc(-1 * var(--loader-exit-travel,100%)));filter:blur(var(--loader-exit-blur,8px));
-  transition:transform var(--loader-exit-time,320ms) var(--loader-exit-ease,cubic-bezier(.32,.08,.22,1)),filter var(--loader-exit-time,320ms) ease;
-  transition-delay:calc(var(--column) * var(--loader-column-stagger,40ms))
+  transition:transform var(--loader-exit-time,520ms) var(--loader-exit-ease,cubic-bezier(.42,0,.22,1)),filter var(--loader-exit-time,520ms) ease;
+  transition-delay:calc(var(--column) * var(--loader-column-stagger,60ms))
 }
 html.intro-loader-exiting .intro-loader-content{
   opacity:0;transform:translateY(-36px);filter:blur(var(--loader-exit-blur,8px));
-  transition:opacity var(--loader-exit-time,320ms) ease,transform var(--loader-exit-time,320ms) var(--loader-exit-ease,cubic-bezier(.32,.08,.22,1)),filter var(--loader-exit-time,320ms) ease
+  transition:opacity var(--loader-exit-time,520ms) ease,transform var(--loader-exit-time,520ms) var(--loader-exit-ease,cubic-bezier(.42,0,.22,1)),filter var(--loader-exit-time,520ms) ease
 }
 .intro-loader img{display:block;width:min(56vw,38svh,240px);height:auto;margin-bottom:10px}
 .intro-loader-copy{display:flex;align-items:baseline;justify-content:center;gap:16px;font-size:clamp(30px,7vw,44px)}
@@ -1019,7 +1019,7 @@ if(document.documentElement.classList.contains('intro-pending')){
     if(finished)return;
     showLoaderPercent(100);
     if(!motion.matches)root.classList.add('intro-loader-exiting');
-    timers.push(setTimeout(motion.matches?finishIntro:startIntro,motion.matches?320:520));
+    timers.push(setTimeout(motion.matches?finishIntro:startIntro,motion.matches?320:820));
   });
 }
 const themeToggle=document.querySelector('.theme-toggle');function updateThemeToggle(){const dark=document.documentElement.dataset.theme==='dark';themeToggle.textContent=dark?'Light mode':'Dark mode';themeToggle.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme')}updateThemeToggle();themeToggle.addEventListener('click',()=>{const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('portfolio-theme',theme)}catch{}updateThemeToggle()});
