@@ -922,12 +922,11 @@ if(document.documentElement.classList.contains('intro-pending')){
 
   navigation.querySelectorAll('a').forEach(a=>a.addEventListener('click',finishIntro,{once:true}));
   motion.addEventListener('change',event=>{if(event.matches)finishIntro()});
-  const replaying=new URLSearchParams(location.search).has('intro');
   const ready=Promise.allSettled([
     hand.decode(),
     document.fonts.load('300 18px "Nata Sans"'),
     document.fonts.load('500 18px "Nata Sans"'),
-    new Promise(resolve=>timers.push(setTimeout(resolve,replaying?1500:800)))
+    new Promise(resolve=>timers.push(setTimeout(resolve,2000)))
   ]);
   Promise.race([
     ready,
