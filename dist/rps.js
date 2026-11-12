@@ -82,7 +82,21 @@ function prepareHand(id,move,label){
   image.dataset.gesture=move;
   return {current,image,ready:image.decode().catch(()=>{})};
 }
-async function showRoundResult(result){const overlay=game.querySelector('.rps-round-overlay');overlay.querySelector('span').textContent=result==='win'?'You Win':result==='lose'?'You Lose':"It’s a Tie";overlay.classList.remove('is-leaving');overlay.classList.add('is-visible');await delay(1100);overlay.classList.remove('is-visible');overlay.classList.add('is-leaving');await delay(reducedMotion.matches?0:200);overlay.classList.remove('is-leaving')}
+async function showRoundResult(result) {
+  const overlay = game.querySelector('.rps-round-overlay');
+  const label = overlay.querySelector('.rps-outcome-label');
+  const text = result === 'win' ? 'You Win' : result === 'lose' ? 'You Lose' : 'It’s a Tie';
+  label.textContent = text;
+  label.dataset.label = text;
+  overlay.dataset.roundResult = result;
+  overlay.classList.remove('is-leaving');
+  overlay.classList.add('is-visible');
+  await delay(1100);
+  overlay.classList.remove('is-visible');
+  overlay.classList.add('is-leaving');
+  await delay(reducedMotion.matches ? 0 : 200);
+  overlay.classList.remove('is-leaving');
+}
 function clearSelection(){buttons.forEach(b=>{b.classList.remove('is-selected');b.setAttribute('aria-pressed','false')})}
 async function setScoreDigits(group,value,animate){
   const next=String(value);
@@ -124,9 +138,70 @@ function settleLayout(items){
     });
   });
 }
-function enterGame(){clearEmojiRain();celebrate?.reset();game.querySelector('.rps-replay-group').hidden=true;const previousLayout=captureLayout();game.classList.remove('is-complete','hands-revealed');game.appendChild(play);delete game.dataset.result;clearSelection();game.classList.remove('is-idle','is-activating');newPattern();clearTimeout(timer);you=me=round=0;busy=false;started=true;tally();game.classList.remove('is-playing','user-revealed');actions.getAnimations().forEach(a=>a.cancel());actions.hidden=false;play.hidden=true;buttons.forEach(b=>b.disabled=false);resetHand('rps-you','Your hand');resetHand('rps-me','My hand');status.textContent='Round 1 of 3 · Pick your move.';subtitle.textContent='Pick your move';game.querySelector('.rps-round').textContent='Round 1 of 3';if(!matchMedia('(prefers-reduced-motion: reduce)').matches){game.classList.add('is-activating')}settleLayout(previousLayout);buttons[0].focus({preventScroll:true})}
+function captureOpeningHands() {
+  return [...game.querySelectorAll('.rps-arena figure img')].map(el => ({
+    el,
+    rect: el.getBoundingClientRect(),
+  }));
+}
+function settleOpeningHands(hands) {
+  if (reducedMotion.matches) return;
+  for (const { el, rect } of hands) {
+    const next = el.getBoundingClientRect();
+    if (!next.width || !next.height || !rect.width || !rect.height) continue;
+    const x = rect.left - next.left;
+    const y = rect.top - next.top;
+    el.animate([
+      { transformOrigin: 'top left', transform: `translate(${x}px,${y}px) scale(${rect.width / next.width},${rect.height / next.height})` },
+      { transformOrigin: 'top left', transform: 'none' },
+    ], { duration: 360, easing: 'cubic-bezier(.22,1,.36,1)' });
+  }
+}
+function enterGame(openingHands){clearEmojiRain();celebrate?.reset();game.querySelector('.rps-replay-group').hidden=true;const previousLayout=openingHands ? null : captureLayout();game.classList.remove('is-complete','hands-revealed');game.appendChild(play);delete game.dataset.result;clearSelection();game.classList.remove('is-idle','is-activating');newPattern();clearTimeout(timer);you=me=round=0;busy=false;started=true;tally();game.classList.remove('is-playing','user-revealed');actions.getAnimations().forEach(a=>a.cancel());actions.hidden=false;play.hidden=true;buttons.forEach(b=>b.disabled=false);resetHand('rps-you','Your hand');resetHand('rps-me','My hand');status.textContent='Round 1 of 3 · Pick your move.';subtitle.textContent='Pick your move';game.querySelector('.rps-round').textContent='Round 1 of 3';if(!matchMedia('(prefers-reduced-motion: reduce)').matches){game.classList.add('is-activating')}if(openingHands)settleOpeningHands(openingHands);else settleLayout(previousLayout);buttons[0].focus({preventScroll:true})}
 let entering=false;
-async function start(){if(entering)return;entering=true;const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;if(!reduce){const leaving=[play];if(game.classList.contains('is-idle'))leaving.push(game.querySelector('.rps-title'));await Promise.all(leaving.map((el,i)=>el.animate([{opacity:1,transform:'translateY(0)',filter:'blur(0)'},{opacity:0,transform:'translateY(-10px)',filter:'blur(3px)'}],{duration:240,delay:i*30,easing:'cubic-bezier(.4,0,.2,1)'}).finished.catch(()=>{})))}enterGame();entering=false}
+async function start() {
+  if (entering) return;
+  entering = true;
+  const exits = [];
+  const idle = game.classList.contains('is-idle');
+  try {
+    if (idle) {
+      play.classList.add('is-pressed');
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      await delay(100);
+      play.classList.remove('is-pressed');
+      if (!reducedMotion.matches) await delay(220);
+    }
+    if (!reducedMotion.matches) {
+      const fadeUp = [
+        { opacity: 1, transform: 'translateY(0)', filter: 'blur(0)' },
+        { opacity: 0, transform: 'translateY(-10px)', filter: 'blur(3px)' },
+      ];
+      const timing = { duration: 240, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' };
+      if (idle) {
+        const distance = Math.max(24, game.getBoundingClientRect().bottom - play.getBoundingClientRect().top + 8);
+        exits.push(play.animate([
+          { opacity: 1, transform: 'translateY(0)' },
+          { opacity: 1, transform: `translateY(${distance * 0.5}px)`, offset: 0.55 },
+          { opacity: 0, transform: `translateY(${distance}px)` },
+        ], { ...timing, duration: 300 }));
+        const title = game.querySelector('.rps-title');
+        const titleDistance = title.getBoundingClientRect().bottom - game.getBoundingClientRect().top + 8;
+        exits.push(title.animate([
+          { transform: 'translateY(0)' },
+          { transform: `translateY(-${titleDistance}px)` },
+        ], { ...timing, duration: 270, delay: 30 }));
+      } else {
+        exits.push(play.animate(fadeUp, timing));
+      }
+      await Promise.allSettled(exits.map(animation => animation.finished));
+    }
+    enterGame(idle ? captureOpeningHands() : null);
+  } finally {
+    for (const animation of exits) animation.cancel();
+    entering = false;
+  }
+}
 // Sound cues adapted from Hewar and Raphael Salaja’s userinterface.wiki.
 
 function playClick(ctx) {
